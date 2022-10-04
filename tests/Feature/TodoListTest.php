@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\TodoList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class TodoListTest extends TestCase
@@ -13,10 +12,11 @@ class TodoListTest extends TestCase
 
     public function test_get_todo_list()
     {
-        TodoList::create(['name' => 'Farhad']);
+        TodoList::factory()->count(2)->create(['name' => 'my list']);
 
         $response = $this->getJson(route('todo-list.index'));
 
-        $this->assertEquals(1, count($response->json()));
+        $this->assertEquals(2, count($response->json()));
+        $this->assertEquals('my list', $response->json()[0]['name']);
     }
 }
