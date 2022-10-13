@@ -15,7 +15,7 @@ class TodoListTest extends TestCase
     function setUp(): void
     {
         parent::setUp();
-        $this->todoList = TodoList::factory()->create(['name' => 'my list']);
+        $this->todoList = $this->createTodoList(['name' => 'my list']);
     }
 
     public function test_get_all_todo_list()
@@ -49,9 +49,38 @@ class TodoListTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $response = $this->postJson(route('todo-list.store'))
+        $this->postJson(route('todo-list.store'))
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['name']);
+    }
+
+    public function test_delete_todo_list()
+    {
+        $this->deleteJson(route('todo-list.destroy', $this->todoList->id))->assertNoContent();
+
+        $this->assertDatabaseMissing('todo_lists', ['name' => $this->todoList->name]);
+    }
+
+    public function test_update_todo_list()
+    {
+        $this->patch(route('todo-list.update', $this->todoList->id), ['name' => 'updated name'])
+            ->assertOk();
+
+        $this->assertDatabaseHas('todo_lists', ['id' => $this->todoList->id, 'name' => 'updated name']);
+    }
+
+    public function test_while_updating_todo_list_name_field_is_required()
+    {
+        $this->withExceptionHandling();
+
+        $this->patchJson(route('todo-list.update', $this->todoList->id))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['name']);
+    }
+
+    public function createTodoList($args = [])
+    {
+        return TodoList::factory()->create($args);
     }
 
 }
