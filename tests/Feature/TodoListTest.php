@@ -78,9 +78,4 @@ class TodoListTest extends TestCase
             ->assertJsonValidationErrors(['name']);
     }
 
-    public function createTodoList($args = [])
-    {
-        return TodoList::factory()->create($args);
-    }
-
 }
