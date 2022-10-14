@@ -15,7 +15,7 @@ class TaskTest extends TestCase
         $list = $this->createTodoList();
         $task = $this->createTodoTask();
 
-        $response = $this->getJson(route('todo-list.index', $list->id))->assertOk()->json();
+        $response = $this->getJson(route('todo-list.task.index', $list->id))->assertOk()->json();
 
         $this->assertEquals(1, count($response));
         $this->assertEquals($task->title, $response[0]['title']);
@@ -36,7 +36,7 @@ class TaskTest extends TestCase
     {
         $task = $this->createTodoTask();
 
-        $this->deleteJson(route('todo-list.task.destroy', $task->id))->assertNoContent();
+        $this->deleteJson(route('task.destroy', $task->id))->assertNoContent();
 
         $this->assertDatabaseMissing('tasks', ['title' => $task->title]);
     }
